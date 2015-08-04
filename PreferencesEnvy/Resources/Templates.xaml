@@ -1,0 +1,90 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system ="clr-namespace:System;assembly=mscorlib"
+                    xmlns:viewModels="clr-namespace:PreferencesEnvy.ViewModels">
+
+    <DataTemplate x:Key="ValuesTemplate">
+        <TextBlock Text="{Binding ID}" />
+    </DataTemplate>
+
+    <HierarchicalDataTemplate  x:Key="PreferenceTreeViewTemplate" 
+                               ItemTemplate="{StaticResource ValuesTemplate}"
+        ItemsSource="{Binding Preference.Values}" 
+        DataType="{x:Type viewModels:PreferenceViewModel}">
+        <TextBlock Text="{Binding Preference.ID}" />
+    </HierarchicalDataTemplate>
+
+    <DataTemplate x:Key="ValueTypeTemplate" DataType="{x:Type viewModels:PreferenceViewModel}">
+        <StackPanel Grid.Row="2" Orientation="Vertical">
+            
+            <TextBlock Text="Enter new value " />
+            
+            <TextBox  x:Name="NewValueTextBox" 
+                Text="{Binding Preference.DefaultValue,
+                Mode=OneWayToSource, UpdateSourceTrigger=LostFocus}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="EnumTypeTemplate" DataType="{x:Type viewModels:PreferenceViewModel}">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Select new value" />
+            <ComboBox SelectedValue="{Binding CurrentPreferenceValue}" ItemsSource="{Binding Preference.Values}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="BooleanTypeTemplate" DataType="{x:Type viewModels:PreferenceViewModel}">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Select new value" />
+            <ComboBox>
+                <ComboBox.Items>
+                    <system:Boolean>True</system:Boolean>
+                    <system:Boolean>False</system:Boolean>
+                </ComboBox.Items>
+            </ComboBox>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ChangePreferenceTemplate" DataType="{x:Type viewModels:PreferenceViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{Binding Preference.ID}" />
+            <StackPanel Grid.Row="1" Margin="15,0,0,0" Grid.Column="1" Orientation="Horizontal">
+                <TextBlock  Text="Current value: " />
+                <TextBlock  Text="{Binding Preference.DefaultValue}" />
+            </StackPanel>
+
+            <ContentControl Width="200" 
+                                Grid.Row="2" 
+                                x:Name="NewValueControl"
+                                Content="{Binding}" 
+                                ContentTemplate="{StaticResource EnumTypeTemplate}" />
+
+            <StackPanel Grid.Row="3"  Margin="0,0,20,10" Orientation="Horizontal"
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Bottom">
+
+                <Button  Width="100" Height="30" Margin="0,0,10,0"  Content="Reset" />
+                <Button  Width="100" Height="30" 
+                         Content="Save" 
+                         Command="{Binding RelativeSource={RelativeSource FindAncestor, 
+                         AncestorType={x:Type ContentControl}}, Path=DataContext.SavePreferenceCommand}"
+                         CommandParameter="{Binding}"
+                         />
+            </StackPanel>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Preference.Type}" Value="String">
+                <Setter TargetName="NewValueControl" Property="ContentTemplate" Value="{StaticResource ValueTypeTemplate}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Preference.Type}" Value="Boolean">
+                <Setter TargetName="NewValueControl" Property="ContentTemplate" Value="{StaticResource BooleanTypeTemplate}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+</ResourceDictionary>
