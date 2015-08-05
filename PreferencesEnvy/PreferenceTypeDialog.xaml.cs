@@ -1,5 +1,4 @@
-﻿using Entities;
-using Core.SerializerService;
+﻿using PreferencesEnvy.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,27 +11,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using PreferencesEnvy.ViewModels;
 
 namespace PreferencesEnvy
 {
-
-    public partial class MainWindow : Window
+    /// <summary>
+    /// Interaction logic for PreferenceTypeDialog.xaml
+    /// </summary>
+    public partial class PreferenceTypeDialog : Window
     {
-        public IMainViewModel MainViewModel { get; set; }
-
-        public MainWindow(IMainViewModel mainViewModel)
+        public PreferenceTypeDialog()
         {
-            MainViewModel = mainViewModel;
-            Initialize();
             InitializeComponent();
-        }
-
-        private void Initialize()
-        {
-            MainViewModel.Initialize();
         }
     }
 }

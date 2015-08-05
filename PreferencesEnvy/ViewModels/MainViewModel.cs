@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Core.SerializerService;
-using Core.Entities;
+using Entities;
 using PreferencesEnvy.Support;
 using System.Windows.Input;
+using System.Windows;
 
 namespace PreferencesEnvy.ViewModels
 {
@@ -16,20 +17,37 @@ namespace PreferencesEnvy.ViewModels
         #region Private fields and Contants
 
         private IPreferencesManager _PreferencesManager;
-        private PrefFile _PrefFile;
+        private IWindowFactory _WindowFactory;
+        private IPreferenceTypeViewModel _PreferenceTypeViewModel;
+
         #endregion
 
         #region Constructors
 
-        public MainViewModel(IPreferencesManager preferencesManager)
+        public MainViewModel(IPreferencesManager preferencesManager, 
+                             IWindowFactory windowFactory, 
+                             IDelegateCommand selectedPreferenceCommand, 
+                             IDelegateCommand savePreferenceCommand,
+                             IDelegateCommand saveAllCommand,
+                             IDelegateCommand openFileCommand,
+                             IPreferenceTypeViewModel preferenceTypeViewModel)
             : base()
         {
             _PreferencesManager = preferencesManager;
+            _WindowFactory = windowFactory;
+            _PreferenceTypeViewModel = preferenceTypeViewModel;
 
-            //TODO: Find a way to inject these
-            SelectedPreferenceCommand = new DelegateCommand(p => SetSelectedPreference(p)); 
-            SavePreferenceCommand = new DelegateCommand(p => SavePreference(p));
-            SaveAllCommand = new DelegateCommand(x => SaveAll());
+            selectedPreferenceCommand.ExecuteAction = p => SetSelectedPreference(p);
+            savePreferenceCommand.ExecuteAction = p => SavePreference(p);
+            saveAllCommand.ExecuteAction = p => SaveAll();
+            openFileCommand.ExecuteAction = p => OpenFile();
+
+            SelectedPreferenceCommand = selectedPreferenceCommand;
+            SavePreferenceCommand = savePreferenceCommand;
+            SaveAllCommand = saveAllCommand;
+            OpenFileCommand = openFileCommand;
+
+            Preferences = new ObservableCollection<IPreferenceViewModel>();
         }
 
         #endregion
@@ -52,13 +70,26 @@ namespace PreferencesEnvy.ViewModels
         public ICommand SelectedPreferenceCommand { get; set; }
         public ICommand SavePreferenceCommand { get; set; }
         public ICommand SaveAllCommand { get; set; }
+        public ICommand OpenFileCommand { get; set; }
+
+        private PreferenceType _PreferenceType;
+        public PreferenceType PreferenceType
+        {
+            get { return _PreferenceType; }
+            set
+            {
+                _PreferenceType = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Public Methods
 
         public void Initialize()
         {
-            Preferences = new ObservableCollection<IPreferenceViewModel>(_PreferencesManager.LoadedPreferences());
+           // Preferences = new ObservableCollection<IPreferenceViewModel>(_PreferencesManager.LoadedPreferences());
         }
 
         #endregion
@@ -78,6 +109,27 @@ namespace PreferencesEnvy.ViewModels
 
         private void SaveAll()
         {
+      //      _PreferencesManager.SaveAll();
+        }
+
+        private void OpenFile()
+        {
+            try
+            {
+                _WindowFactory.OpenPreferenceFileDialog(_PreferenceTypeViewModel);
+                string fileName = _PreferenceTypeViewModel.PreferenceFileName;
+                PreferenceType preferenceType = _PreferenceTypeViewModel.PrefFileType;
+                List<IPreferenceViewModel> prefs = _PreferencesManager.LoadedPreferences(preferenceType, fileName);
+                Preferences.Clear();
+                foreach (var pref in prefs)
+                {
+                    Preferences.Add(pref);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("You selected a file different than the type specified", "Wrong file"); //Move this elsewhere
+            }
             
         }
         #endregion

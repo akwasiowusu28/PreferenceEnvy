@@ -5,7 +5,7 @@ namespace PreferencesEnvy.Support
 {
     public interface IPreferencesManager
     {
-        List<IPreferenceViewModel> LoadedPreferences();
+        List<IPreferenceViewModel> LoadedPreferences(PreferenceType preferenceType, string fileName);
         void SaveAll();
         void SavePreference(IPreferenceViewModel newValue);
     }

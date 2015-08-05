@@ -68,13 +68,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PreferenceTypeDialog.xaml.cs">
+      <DependentUpon>PreferenceTypeDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Support\Bootstrapper.cs" />
     <Compile Include="Support\DelegateCommand.cs" />
     <Compile Include="Support\EventToCommand.cs" />
+    <Compile Include="Support\IDelegateCommand.cs" />
     <Compile Include="Support\IPreferencesManager.cs" />
+    <Compile Include="Support\IWindowFactory.cs" />
     <Compile Include="Support\PreferenceLoader.cs" />
+    <Compile Include="Support\PreferenceType.cs" />
+    <Compile Include="Support\WindowFactory.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
+    <Compile Include="ViewModels\IPreferenceTypeViewModel.cs" />
+    <Compile Include="ViewModels\PreferenceTypeViewModel.cs" />
     <Compile Include="ViewModels\IPreferenceViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PreferenceViewModel.cs" />
@@ -91,6 +100,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PreferenceTypeDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -132,6 +145,10 @@
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{9cae9f05-6f46-4696-b7fc-bb7345bb4780}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Entities\Entities.csproj">
+      <Project>{c5d98731-3f16-49c3-aedf-d87737487355}</Project>
+      <Name>Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Support\Support.csproj">
       <Project>{98acbc06-e3d7-493c-aa78-bb9ec99900b9}</Project>

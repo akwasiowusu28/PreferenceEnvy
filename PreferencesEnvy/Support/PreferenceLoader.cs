@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using Entities;
 using Core.SerializerService;
 using PreferencesEnvy.ViewModels;
 using SimpleInjector;
@@ -12,21 +12,37 @@ namespace PreferencesEnvy.Support
 {
     public class PreferencesManager : IPreferencesManager
     {
+        #region Private fields
+
         private readonly Container _Container;
         private readonly ISerializerService _SerializerService;
-        private PrefFile _PrefFile;
+        private ConfigPrefFile _ConfigPrefFile;
+        private MarketPrefFile _MarketPrefFile;
+        private string _FileName;
+        private PreferenceType _PreferenceType;
+
+        #endregion
+        
+        #region Constructor
 
         public PreferencesManager(ISerializerService serializerService, Container container){
             _Container = container;
             _SerializerService = serializerService;
         }
 
-        public List<IPreferenceViewModel> LoadedPreferences()
+        #endregion
+
+        #region Public Methods
+        public List<IPreferenceViewModel> LoadedPreferences(PreferenceType preferenceType, string fileName)
         {
             List<IPreferenceViewModel> preferenceViewModels = new List<IPreferenceViewModel>();
+           
+            _FileName = fileName;
+            _PreferenceType = preferenceType;
 
-            _PrefFile = _SerializerService.Deserialize<PrefFile>("C:/Users/aowusu/Desktop/preferences.pref"); //TODO: refactor this
-            foreach (var preference in _PrefFile.Preferences.Prefs)
+            IPrefFile prefFile = GetPreferenceFile();
+            
+            foreach (var preference in prefFile.Preferences.Prefs)
             {
                 IPreferenceViewModel preferenceViewModel = _Container.GetInstance<IPreferenceViewModel>();
                 preferenceViewModel.Preference = preference;
@@ -37,24 +53,11 @@ namespace PreferencesEnvy.Support
             return preferenceViewModels;
         }
 
-        private IValue getcurrentValue(IPreference preference)
-        {
-             IValue currentValue = null;
-            if (preference != null && preference.Values != null && preference.Values.Any())
-            {
-                currentValue = _Container.GetInstance<IValue>();
-                currentValue.ID = preference.DefaultValue;
-                currentValue.Name = preference.Values.FirstOrDefault(v => v.ID.Equals(preference.DefaultValue));
-            }
-
-            return currentValue;
-        }
-
         public void SavePreference(IPreferenceViewModel newValue)
         {
             if (newValue != null)
             {
-                Preference pref = _PrefFile.Preferences.Prefs.Where((p) => p.ID.Equals(newValue.Preference.ID)).FirstOrDefault();
+                IPreference pref = _ConfigPrefFile.Preferences.Prefs.Where((p) => p.ID.Equals(newValue.Preference.ID)).FirstOrDefault();
                 if (pref != null)
                 {
                     if (newValue.CurrentPreferenceValue != null)
@@ -71,7 +74,50 @@ namespace PreferencesEnvy.Support
 
         public void SaveAll()
         {
-            _SerializerService.Serialize<PrefFile>("C:/Users/aowusu/Desktop/preferences.pref", _PrefFile); //TODO: Refactor this
+            if (_PreferenceType.Equals(PreferenceType.ConfigPreferences))
+            {
+                _SerializerService.Serialize<ConfigPrefFile>(_FileName, _ConfigPrefFile); 
+            }
+            else
+            {
+                _SerializerService.Serialize<MarketPrefFile>(_FileName, _MarketPrefFile);
+            }
         }
+        #endregion
+
+        #region Private Methods
+        private IPrefFile GetPreferenceFile()
+        {
+            IPrefFile prefFile = null;
+            if (_PreferenceType.Equals(PreferenceType.ConfigPreferences))
+            {
+                _ConfigPrefFile = _SerializerService.Deserialize<ConfigPrefFile>(_FileName);
+                prefFile = _ConfigPrefFile;
+            }
+            else
+            {
+                _MarketPrefFile = _SerializerService.Deserialize<MarketPrefFile>(_FileName);
+                prefFile = _MarketPrefFile;
+            }
+            return prefFile;
+        }
+
+        private IValue getcurrentValue(IPreference preference)
+        {
+             IValue currentValue = null;
+            if (preference != null && preference.Values != null && preference.Values.Any())
+            {
+                currentValue = _Container.GetInstance<IValue>();
+                currentValue.ID = preference.DefaultValue;
+                currentValue.Name = preference.Values.FirstOrDefault(v => v.ID.Equals(preference.DefaultValue));
+            }
+
+            return currentValue;
+        }
+
+        #endregion
+
+
+        
     }
 }

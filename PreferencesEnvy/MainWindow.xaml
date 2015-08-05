@@ -4,40 +4,54 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Title="Preference Envy" 
         Height="450" 
-        Width="625"
-        
+        Width="500"
         xmlns:support="clr-namespace:PreferencesEnvy.Support"
-        DataContext="{Binding MainViewModel, RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding MainViewModel, RelativeSource={RelativeSource Self}}"
+        WindowStartupLocation="CenterScreen"
+        >
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Templates.xaml" />
-                <ResourceDictionary Source="Resources/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".4*"/>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" IsMainMenu="True" Height="25"> <!--When menu other menu items are added, consider other ways of handling their actions-->
+            <MenuItem Header="Open Pref File">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <support:EventToCommand Command="{Binding OpenFileCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
 
-        <TreeView Grid.Column="0" x:Name="PreferencesTreeview"
+            <TreeView Grid.Column="0" x:Name="PreferencesTreeview"
             ItemsSource="{Binding Preferences}"
-            ItemTemplate="{StaticResource PreferenceTreeViewTemplate}" >
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectedItemChanged">
-                    <support:EventToCommand Command="{Binding SelectedPreferenceCommand}" 
+            ItemTemplate="{StaticResource PreferenceTreeViewTemplate}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <support:EventToCommand Command="{Binding SelectedPreferenceCommand}" 
                                             CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
                          AncestorType={x:Type TreeView}}, Path=SelectedItem}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </TreeView>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TreeView>
 
-        <ContentControl Grid.Column="1" 
+            <ContentControl Grid.Column="1" 
                         Content="{Binding SelectedPreference}"
                         ContentTemplate="{StaticResource ChangePreferenceTemplate}"/>
+        </Grid>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">

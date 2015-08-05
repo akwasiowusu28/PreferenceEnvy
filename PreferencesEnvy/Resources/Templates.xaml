@@ -3,6 +3,10 @@
                     xmlns:system ="clr-namespace:System;assembly=mscorlib"
                     xmlns:viewModels="clr-namespace:PreferencesEnvy.ViewModels">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
     <DataTemplate x:Key="ValuesTemplate">
         <TextBlock Text="{Binding ID}" />
     </DataTemplate>
@@ -35,7 +39,7 @@
     <DataTemplate x:Key="BooleanTypeTemplate" DataType="{x:Type viewModels:PreferenceViewModel}">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Select new value" />
-            <ComboBox>
+            <ComboBox SelectedValue="{Binding CurrentPreferenceValue.ID}">
                 <ComboBox.Items>
                     <system:Boolean>True</system:Boolean>
                     <system:Boolean>False</system:Boolean>
@@ -48,13 +52,18 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="20" />
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="{Binding Preference.ID}" />
-            <StackPanel Grid.Row="1" Margin="15,0,0,0" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="0" Text="{Binding Preference.ID}" Background="Beige" TextAlignment="Center" />
+            <StackPanel Grid.Row="1" 
+                        Margin="15,0,0,0" 
+                        Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
                 <TextBlock  Text="Current value: " />
                 <TextBlock  Text="{Binding Preference.DefaultValue}" />
             </StackPanel>
@@ -69,8 +78,8 @@
                             HorizontalAlignment="Right" 
                             VerticalAlignment="Bottom">
 
-                <Button  Width="100" Height="30" Margin="0,0,10,0"  Content="Reset" />
-                <Button  Width="100" Height="30" 
+                <Button  Style="{StaticResource ButtonStyle}"  Content="Reset" />
+                <Button  Style="{StaticResource ButtonStyle}" 
                          Content="Save" 
                          Command="{Binding RelativeSource={RelativeSource FindAncestor, 
                          AncestorType={x:Type ContentControl}}, Path=DataContext.SavePreferenceCommand}"

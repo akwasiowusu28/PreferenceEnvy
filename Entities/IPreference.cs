@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Core.Entities
+namespace Entities
 {
     public interface IPreference : IEntity
     {

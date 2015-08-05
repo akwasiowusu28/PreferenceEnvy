@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Core.Entities
+namespace Entities
 {
-    public class Value : Entity, IValue
+    public class Entity : IEntity
     {
-        public Value()
+        public Entity()
             : base()
         {
 
         }
 
-        [XmlElement]
-        public Entity Name { get; set; }
+        [XmlAttribute]
+        public string ID { get; set; }
 
         public override string ToString()
         {
-            return base.ToString();
+            return ID;
         }
     }
 }

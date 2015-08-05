@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Core.Entities
+namespace Entities
 {
     public class Preference : Entity, IPreference
     {

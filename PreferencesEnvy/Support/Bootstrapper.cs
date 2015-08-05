@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using Entities;
 using Core.SerializerService;
 using PreferencesEnvy.ViewModels;
 using SimpleInjector;
@@ -22,6 +22,10 @@ namespace PreferencesEnvy.Support
             container.Register<IPreference, Preference>();
             container.Register<MainWindow>();
             container.Register<IPreferencesManager, PreferencesManager>();
+            container.Register<IWindowFactory, WindowFactory>(); //TODO: Should use a delegate type parameter to enable some kind or conditional creation
+            container.Register<PreferenceTypeDialog>();
+            container.Register<IDelegateCommand, DelegateCommand>();
+            container.Register<IPreferenceTypeViewModel, PreferenceTypeViewModel>();
 
             container.Verify();
         }

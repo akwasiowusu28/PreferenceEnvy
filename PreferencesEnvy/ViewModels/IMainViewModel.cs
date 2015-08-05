@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using PreferencesEnvy.Support;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 namespace PreferencesEnvy.ViewModels
 {
@@ -10,5 +11,6 @@ namespace PreferencesEnvy.ViewModels
         ICommand SavePreferenceCommand { get; set; }
         ICommand SelectedPreferenceCommand { get; set; }
         IPreferenceViewModel SelectedPreference { get; set; }
+        PreferenceType PreferenceType { get; set; }
     }
 }
